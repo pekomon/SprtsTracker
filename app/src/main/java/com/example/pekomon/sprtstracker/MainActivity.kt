@@ -1,11 +1,18 @@
-package com.example.pekomon.sprtstracker
+p  package com.example.pekomon.sprtstracker
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.example.pekomon.sprtstracker.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        //setContentView(R.layout.activity_main)
+        setContentView(binding.root)
+        binding.tvHelloText.text = "Yeallo!"
     }
 }
