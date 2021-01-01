@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">SpörtsTracker</string>
+    <string-array name="filter_options">
+        <item>Päivä</item>
+        <item>Aika</item>
+        <item>Matka</item>
+        <item>Keskinopeus</item>
+        <item>Kalorit</item>
+    </string-array>
+</resources>
