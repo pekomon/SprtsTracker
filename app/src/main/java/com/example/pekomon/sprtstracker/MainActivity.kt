@@ -1,4 +1,4 @@
-p  package com.example.pekomon.sprtstracker
+package com.example.pekomon.sprtstracker
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
