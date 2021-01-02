@@ -10,9 +10,7 @@ import com.example.pekomon.sprtstracker.data.entity.Run
     entities = [Run::class],
     version = 1
 )
-
 @TypeConverters(BitmapTypeConverter::class)
-
 abstract class SportsDatabase : RoomDatabase() {
     abstract fun runDao(): RunDao
 }
