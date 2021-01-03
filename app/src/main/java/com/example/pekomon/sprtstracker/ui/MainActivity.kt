@@ -1,4 +1,4 @@
-package com.example.pekomon.sprtstracker
+package com.example.pekomon.sprtstracker.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -21,8 +21,6 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         //setContentView(R.layout.activity_main)
         setContentView(binding.root)
-        binding.tvHelloText.text = "Yeallo!"
 
-        Log.d("xxx", "RunDao: ${runDao.hashCode()}" )
     }
 }

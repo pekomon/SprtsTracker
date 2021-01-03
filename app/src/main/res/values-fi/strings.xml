@@ -1,5 +1,18 @@
 <resources>
     <string name="app_name">SpörtsTracker</string>
+    <string name="sort_by">Sorttaus:</string>
+    <string name="total_distance">Matka yhteensä</string>
+    <string name="total_time">Aika yhteensä</string>
+    <string name="total_calories_burned">Kalorit yhteensä</string>
+    <string name="_0kcal">0kcal</string>
+    <string name="your_name">Nimesi</string>
+    <string name="your_weight">Painosi</string>
+    <string name="apply_changes">Hyväksy muutokset</string>
+    <string name="let_s_go_username">Menoksi, USERNAME!</string>
+    <string name="finish_run">Lopeta</string>
+    <string name="start">Aloita</string>
+    <string name="setup_continue">Jatka</string>
+    <string name="welcome_nplease_enter_your_name_and_weight">Welcome!\nPlease enter your name and weight.</string>
     <string-array name="filter_options">
         <item>Päivä</item>
         <item>Aika</item>
