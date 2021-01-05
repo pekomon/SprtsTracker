@@ -6,7 +6,7 @@
     <string name="total_time">Total Time</string>
     <string name="total_calories_burned">Total Calories Burned</string>
     <string name="_0kcal">0kcal</string>
-    <string name="average_speed" translatable="false">Average Speed</string>
+    <string name="average_speed">Average Speed</string>
     <string name="your_name">Your Name</string>
     <string name="your_weight">Your Weight</string>
     <string name="apply_changes">Apply Changes</string>
@@ -15,8 +15,11 @@
     <string name="start">Start</string>
     <string name="_00_00_00_00" translatable="false">00:00:00:00</string>
     <string name="setup_continue">Continue</string>
-    <string name="kg">kg</string>
+    <string name="kg" translatable="false">kg</string>
     <string name="welcome_nplease_enter_your_name_and_weight">Welcome!\nPlease enter your name and weight.</string>
+    <string name="bottom_nav_menu_item_your_runs">Your Runs</string>
+    <string name="bottom_nav_menu_item_statistics">Statistics</string>
+    <string name="bottom_nav_menu_item_settings">Settings</string>
     <string-array name="filter_options">
         <item>Date</item>
         <item>Time</item>

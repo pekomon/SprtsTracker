@@ -20,4 +20,8 @@
         <item>Keskinopeus</item>
         <item>Kalorit</item>
     </string-array>
+    <string name="average_speed" translatable="false">Keskinopeus</string>
+    <string name="bottom_nav_menu_item_your_runs">Juoksut</string>
+    <string name="bottom_nav_menu_item_statistics">Statsit</string>
+    <string name="bottom_nav_menu_item_settings">Asetukset</string>
 </resources>
