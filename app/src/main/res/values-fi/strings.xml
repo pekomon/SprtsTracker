@@ -24,4 +24,5 @@
     <string name="bottom_nav_menu_item_your_runs">Juoksut</string>
     <string name="bottom_nav_menu_item_statistics">Statsit</string>
     <string name="bottom_nav_menu_item_settings">Asetukset</string>
+    <string name="allow_location_permissions">Salli sijaintioikeudet voidaksesi käyttää SpörtsTrackeria</string>
 </resources>
