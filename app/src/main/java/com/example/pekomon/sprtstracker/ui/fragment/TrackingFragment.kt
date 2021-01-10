@@ -1,5 +1,6 @@
 package com.example.pekomon.sprtstracker.ui.fragment
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
@@ -7,6 +8,8 @@ import androidx.fragment.app.viewModels
 import com.example.pekomon.sprtstracker.BuildConfig
 import com.example.pekomon.sprtstracker.R
 import com.example.pekomon.sprtstracker.databinding.FragmentTrackingBinding
+import com.example.pekomon.sprtstracker.internal.Constants.ACTION_START_RESUME_SERVICE
+import com.example.pekomon.sprtstracker.service.TrackingService
 import com.example.pekomon.sprtstracker.ui.viewmodel.MainViewModel
 import com.google.android.gms.maps.GoogleMap
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,6 +32,21 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking) {
             map = it
         }
 
+        setupClicklistener()
+
+    }
+
+    private fun setupClicklistener() {
+        binding.btnToggleRun.setOnClickListener {
+            sendToService(ACTION_START_RESUME_SERVICE)
+        }
+    }
+
+    private fun sendToService(action: String) {
+        Intent(requireContext(), TrackingService::class.java).also {
+            it.action = action
+            requireContext().startService(it)
+        }
     }
 
     override fun onResume() {
