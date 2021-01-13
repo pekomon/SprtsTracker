@@ -15,4 +15,7 @@ object Constants {
     const val NOTIFICATION_CHANNEL_NAME = "Spörts Tracker"
     const val NOTIFICATION_ID = 1337
 
+    const val LOCATION_UPDATE_INTERVAL_MS = 5000L
+    const val MINIMUM_LOCATION_INTERVAL_MS = 2000L
+
 }

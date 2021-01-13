@@ -11,6 +11,7 @@ import com.example.pekomon.sprtstracker.R
 import com.example.pekomon.sprtstracker.databinding.FragmentRunBinding
 import com.example.pekomon.sprtstracker.internal.Constants.REQUEST_CODE_LOCATION_PERMISSION
 import com.example.pekomon.sprtstracker.ui.viewmodel.MainViewModel
+import com.example.pekomon.sprtstracker.utils.LocationPermissionHelper
 import com.example.pekomon.sprtstracker.utils.PermissionHelperImpl
 import dagger.hilt.android.AndroidEntryPoint
 import pub.devrel.easypermissions.AppSettingsDialog
@@ -21,18 +22,6 @@ class RunFragment : Fragment(R.layout.fragment_run), EasyPermissions.PermissionC
 
     private val viewModel: MainViewModel by viewModels()
     private lateinit var binding: FragmentRunBinding
-
-    private val neededPermissions = if(Build.VERSION.SDK_INT < Build.VERSION_CODES.Q)
-        arrayOf(
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION
-        )
-    else
-        arrayOf(
-            Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.ACCESS_BACKGROUND_LOCATION,
-        )
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -48,7 +37,7 @@ class RunFragment : Fragment(R.layout.fragment_run), EasyPermissions.PermissionC
     }
 
     private fun checkAndRequestPermissions() {
-        if (PermissionHelperImpl.hasPermissions(requireContext(), *neededPermissions)) {
+        if (LocationPermissionHelper.hasLocationPermissions(requireContext())) {
             return
         }
         requestPermissions()
@@ -60,7 +49,17 @@ class RunFragment : Fragment(R.layout.fragment_run), EasyPermissions.PermissionC
                 this,
                 getString(R.string.allow_location_permissions),
                 REQUEST_CODE_LOCATION_PERMISSION,
-                *neededPermissions
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            )
+        } else {
+            EasyPermissions.requestPermissions(
+                this,
+                getString(R.string.allow_location_permissions),
+                REQUEST_CODE_LOCATION_PERMISSION,
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_BACKGROUND_LOCATION
             )
         }
     }
