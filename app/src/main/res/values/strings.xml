@@ -13,6 +13,7 @@
     <string name="let_s_go_username">Let\'s go, USERNAME!</string>
     <string name="finish_run">Finish Run</string>
     <string name="start">Start</string>
+    <string name="stop">Stop</string>
     <string name="_00_00_00_00" translatable="false">00:00:00:00</string>
     <string name="setup_continue">Continue</string>
     <string name="kg" translatable="false">kg</string>

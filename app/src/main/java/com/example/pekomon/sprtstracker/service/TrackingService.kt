@@ -28,8 +28,6 @@ import com.example.pekomon.sprtstracker.internal.Constants.NOTIFICATION_CHANNEL_
 import com.example.pekomon.sprtstracker.internal.Constants.NOTIFICATION_ID
 import com.example.pekomon.sprtstracker.ui.MainActivity
 import com.example.pekomon.sprtstracker.utils.LocationPermissionHelper
-import com.example.pekomon.sprtstracker.utils.PermissionHelper
-import com.example.pekomon.sprtstracker.utils.PermissionHelperImpl
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -45,13 +43,13 @@ typealias Polylines = MutableList<Polyline>
 class TrackingService : LifecycleService() {
 
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
-    val isRunning = AtomicBoolean(false)
+    val isStarted = AtomicBoolean(false)
 
     companion object {
         private val _isTrackingOn = MutableLiveData<Boolean>(false)
         val isTrackingOn: LiveData<Boolean>
             get() = _isTrackingOn
-        val _pathPoints = MutableLiveData<Polylines>(mutableListOf())
+        private val _pathPoints = MutableLiveData<Polylines>(mutableListOf())
         val pathPoints: LiveData<Polylines>
             get() = _pathPoints
     }
@@ -77,13 +75,18 @@ class TrackingService : LifecycleService() {
             when (it.action) {
                 ACTION_START_RESUME_SERVICE -> {
                     Timber.d("Start resume")
-                    if (!isRunning.getAndSet(true)) {
+                    if (!isStarted.getAndSet(true)) {
+                        Timber.d("Start")
+                        startService()
+                    } else {
+                        Timber.d("Resume")
                         startService()
                     }
                 }
 
                 ACTION_PAUSE_SERVICE -> {
                     Timber.d("Pause")
+                    pause()
                 }
                 ACTION_STOP_SERVICE -> {
                     Timber.d("Stop")
@@ -101,6 +104,10 @@ class TrackingService : LifecycleService() {
         isTrackingOn.observe(this, Observer {
             updateTracking(it)
         })
+    }
+
+    private fun pause() {
+        _isTrackingOn.postValue(false)
     }
 
     // EasyPermissions library is used to get locations

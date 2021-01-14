@@ -1,5 +1,7 @@
 package com.example.pekomon.sprtstracker.internal
 
+import android.graphics.Color
+
 object Constants {
 
     const val DB_NAME = "sprts_tracker_db"
@@ -17,5 +19,10 @@ object Constants {
 
     const val LOCATION_UPDATE_INTERVAL_MS = 5000L
     const val MINIMUM_LOCATION_INTERVAL_MS = 2000L
+
+    const val POLYLINE_COLOR = Color.RED
+    const val POLYLINE_WIDTH = 8f
+
+    const val MAP_ZOOM_LEVEL = 15f
 
 }

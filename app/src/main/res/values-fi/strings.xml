@@ -11,6 +11,7 @@
     <string name="let_s_go_username">Menoksi, USERNAME!</string>
     <string name="finish_run">Lopeta</string>
     <string name="start">Aloita</string>
+    <string name="stop">Lopeta</string>
     <string name="setup_continue">Jatka</string>
     <string name="welcome_nplease_enter_your_name_and_weight">Welcome!\nPlease enter your name and weight.</string>
     <string-array name="filter_options">
