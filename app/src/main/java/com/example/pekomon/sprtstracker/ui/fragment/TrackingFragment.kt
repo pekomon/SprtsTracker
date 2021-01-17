@@ -16,6 +16,7 @@ import com.example.pekomon.sprtstracker.internal.Constants.POLYLINE_WIDTH
 import com.example.pekomon.sprtstracker.service.Polyline
 import com.example.pekomon.sprtstracker.service.TrackingService
 import com.example.pekomon.sprtstracker.ui.viewmodel.MainViewModel
+import com.example.pekomon.sprtstracker.utils.TimeUtils
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.PolylineOptions
@@ -32,6 +33,8 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking) {
 
     // Actual map object which our MapView in Fragment uses to display map
     private var map: GoogleMap? = null
+
+    private var currentRunTimeMillis = 0L
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -72,6 +75,12 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking) {
             points = it
             addLatestPolyline()
             moveCameraToLastLocation()
+        })
+
+        TrackingService.timeRunMillis.observe(viewLifecycleOwner, Observer {
+            currentRunTimeMillis = it
+            val formattedTimeStr = TimeUtils.getFormattedTime(it, true)
+            binding.tvTimer.text = formattedTimeStr
         })
     }
 

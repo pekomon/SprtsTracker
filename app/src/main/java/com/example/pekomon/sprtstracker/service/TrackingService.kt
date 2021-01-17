@@ -26,6 +26,7 @@ import com.example.pekomon.sprtstracker.internal.Constants.MINIMUM_LOCATION_INTE
 import com.example.pekomon.sprtstracker.internal.Constants.NOTIFICATION_CHANNEL_ID
 import com.example.pekomon.sprtstracker.internal.Constants.NOTIFICATION_CHANNEL_NAME
 import com.example.pekomon.sprtstracker.internal.Constants.NOTIFICATION_ID
+import com.example.pekomon.sprtstracker.internal.Constants.TIMER_UPDATE_INTERVAL_MILLIS
 import com.example.pekomon.sprtstracker.ui.MainActivity
 import com.example.pekomon.sprtstracker.utils.LocationPermissionHelper
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -34,6 +35,10 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.maps.model.LatLng
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -45,6 +50,16 @@ class TrackingService : LifecycleService() {
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     val isStarted = AtomicBoolean(false)
 
+    private var isTimerEnabled = false
+    private var lapTime = 0L
+    private var timeRun = 0L
+    private var timeStarted = 0L
+    private var lastSecondTimeStamp = 0L
+
+    private val _timeRunSeconds = MutableLiveData<Long>(0L)
+    val timeRunSeconds: LiveData<Long>
+            get() = _timeRunSeconds
+
     companion object {
         private val _isTrackingOn = MutableLiveData<Boolean>(false)
         val isTrackingOn: LiveData<Boolean>
@@ -52,6 +67,9 @@ class TrackingService : LifecycleService() {
         private val _pathPoints = MutableLiveData<Polylines>(mutableListOf())
         val pathPoints: LiveData<Polylines>
             get() = _pathPoints
+        private val _timeRunMillis = MutableLiveData<Long>(0L)
+        val timeRunMillis: LiveData<Long>
+            get() = _timeRunMillis
     }
 
     val locationCallback = object : LocationCallback() {
@@ -80,7 +98,7 @@ class TrackingService : LifecycleService() {
                         startService()
                     } else {
                         Timber.d("Resume")
-                        startService()
+                        startTimer()
                     }
                 }
 
@@ -106,8 +124,32 @@ class TrackingService : LifecycleService() {
         })
     }
 
+    private fun startTimer() {
+        addEmptyPolyline()
+        _isTrackingOn.postValue(true)
+        timeStarted = System.currentTimeMillis()
+        isTimerEnabled = true
+        CoroutineScope(Dispatchers.Main).launch {
+            while (_isTrackingOn.value!!) {
+                // Time elapsed from 'timeStarted'
+                lapTime = System.currentTimeMillis() - timeStarted
+
+                _timeRunMillis.postValue(timeRun + lapTime)
+                if (_timeRunMillis.value!! >= lastSecondTimeStamp + 1000L) {
+                    //
+                    _timeRunSeconds.postValue(_timeRunSeconds.value!! +1)
+                    lastSecondTimeStamp += 1000
+                }
+                delay(TIMER_UPDATE_INTERVAL_MILLIS)
+            }
+            timeRun += lapTime
+        }
+
+    }
+
     private fun pause() {
         _isTrackingOn.postValue(false)
+        isTimerEnabled = false
     }
 
     // EasyPermissions library is used to get locations
@@ -133,7 +175,8 @@ class TrackingService : LifecycleService() {
     }
 
     private fun startService() {
-        addEmptyPolyline()
+
+        startTimer()
         _isTrackingOn.postValue(true)
 
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
