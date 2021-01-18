@@ -1,15 +1,18 @@
 package com.example.pekomon.sprtstracker.ui.fragment
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
+import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import com.example.pekomon.sprtstracker.R
 import com.example.pekomon.sprtstracker.databinding.FragmentTrackingBinding
 import com.example.pekomon.sprtstracker.internal.Constants.ACTION_PAUSE_SERVICE
 import com.example.pekomon.sprtstracker.internal.Constants.ACTION_START_RESUME_SERVICE
+import com.example.pekomon.sprtstracker.internal.Constants.ACTION_STOP_SERVICE
 import com.example.pekomon.sprtstracker.internal.Constants.MAP_ZOOM_LEVEL
 import com.example.pekomon.sprtstracker.internal.Constants.POLYLINE_COLOR
 import com.example.pekomon.sprtstracker.internal.Constants.POLYLINE_WIDTH
@@ -20,6 +23,7 @@ import com.example.pekomon.sprtstracker.utils.TimeUtils
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.PolylineOptions
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -36,6 +40,8 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking) {
 
     private var currentRunTimeMillis = 0L
 
+    private var menu: Menu? = null
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentTrackingBinding.bind(view)
@@ -50,7 +56,58 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking) {
 
         setupClicklistener()
         setupObservers()
+    }
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        setHasOptionsMenu(true)
+        return super.onCreateView(inflater, container, savedInstanceState)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.toolbar_menu, menu)
+        this.menu = menu
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        super.onPrepareOptionsMenu(menu)
+        if (currentRunTimeMillis > 0L) {
+            this.menu?.getItem(0)?.isVisible = true
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menuitemCancel -> {
+                showCancelConfirmationDialog()
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun showCancelConfirmationDialog() {
+        val dialog = MaterialAlertDialogBuilder(requireContext(), R.style.AlertDialogTheme)
+            .setTitle(R.string.confirm_dialog_title_cancel)
+            .setMessage(R.string.confirm_dialog_message)
+            .setIcon(R.drawable.ic_delete)
+            .setPositiveButton(R.string.confirm_dialog_yes, { _, _ ->
+                stop()
+            })
+            .setNegativeButton(R.string.confirm_dialog_no) { dialogInterface, _ ->
+                dialogInterface.cancel()
+            }
+            .create()
+        dialog.show()
+    }
+
+    private fun stop() {
+        sendToService(ACTION_STOP_SERVICE)
+        findNavController().navigate(R.id.action_trackingFragment_to_runFragment)
     }
 
     private fun setupClicklistener() {
@@ -67,11 +124,11 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking) {
     }
 
     private fun setupObservers() {
-        TrackingService.isTrackingOn.observe(viewLifecycleOwner, Observer {
+        TrackingService.isTrackingOn.observe(viewLifecycleOwner, {
             setTrackingEnabled(it)
         })
 
-        TrackingService.pathPoints.observe(viewLifecycleOwner, Observer {
+        TrackingService.pathPoints.observe(viewLifecycleOwner, {
             points = it
             addLatestPolyline()
             moveCameraToLastLocation()
@@ -86,6 +143,7 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking) {
 
     private fun toggleRun() {
         if (isTrackingOn) {
+            menu?.getItem(0)?.isVisible = true
             sendToService(ACTION_PAUSE_SERVICE)
         } else {
             sendToService(ACTION_START_RESUME_SERVICE)
@@ -94,12 +152,13 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking) {
 
     private fun setTrackingEnabled(trackingOn: Boolean) {
         isTrackingOn = trackingOn
-        if (!trackingOn) {
+        if (!trackingOn && currentRunTimeMillis > 0L) {
             binding.btnToggleRun.text = resources.getString(R.string.start)
             binding.btnFinishRun.visibility = View.VISIBLE
-        } else {
+        } else if (trackingOn){
             binding.btnToggleRun.text = resources.getString(R.string.stop)
             binding.btnFinishRun.visibility = View.GONE
+            menu?.getItem(0)?.isVisible = true
         }
     }
 

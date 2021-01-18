@@ -10,6 +10,7 @@ import android.content.Intent
 import android.location.Location
 import android.os.Build
 import android.os.Looper
+import android.view.Menu
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
@@ -53,11 +54,11 @@ class TrackingService : LifecycleService() {
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private val isStarted = AtomicBoolean(false)
 
+    private var serviceStopped = false
+
     @Inject
     lateinit var baseNotificationBuilder: NotificationCompat.Builder
-
     private lateinit var runNotificationBuilder: NotificationCompat.Builder
-
 
     private var isTimerEnabled = false
     private var lapTime = 0L
@@ -117,6 +118,7 @@ class TrackingService : LifecycleService() {
                 }
                 ACTION_STOP_SERVICE -> {
                     Timber.d("Stop")
+                    stopService()
                 }
             }
         }
@@ -133,6 +135,21 @@ class TrackingService : LifecycleService() {
             updateTracking(it)
             updateRunNotification(it)
         })
+    }
+
+    private fun stopService() {
+        serviceStopped = true
+        isStarted.set(false)
+        pause()
+        _isTrackingOn.postValue(false)
+        _timeRunMillis.postValue(0L)
+        _timeRunSeconds.postValue(0L)
+        _pathPoints.postValue(mutableListOf())
+        _pathPoints.postValue(mutableListOf())
+
+        stopForeground(true)
+        stopSelf()
+
     }
 
     private fun startTimer() {
@@ -198,8 +215,11 @@ class TrackingService : LifecycleService() {
         startForeground(NOTIFICATION_ID, baseNotificationBuilder.build())
 
         timeRunSeconds.observe(this, Observer {
-            val notification = runNotificationBuilder.setContentText(TimeUtils.getFormattedTime(it*1000L, false))
-            notificationManager.notify(NOTIFICATION_ID, notification.build())
+            if (!serviceStopped) {
+                val notification =
+                    runNotificationBuilder.setContentText(TimeUtils.getFormattedTime(it * 1000L, false))
+                notificationManager.notify(NOTIFICATION_ID, notification.build())
+            }
         })
     }
 
@@ -255,8 +275,9 @@ class TrackingService : LifecycleService() {
             isAccessible = true
             set(runNotificationBuilder, ArrayList<NotificationCompat.Action>())
         }
-        runNotificationBuilder = baseNotificationBuilder.addAction(R.drawable.ic_pause_circle, actionText, pendingIntent)
-        notificationManager.notify(NOTIFICATION_ID, runNotificationBuilder.build())
-
+        if (!serviceStopped) {
+            runNotificationBuilder = baseNotificationBuilder.addAction(R.drawable.ic_pause_circle, actionText, pendingIntent)
+            notificationManager.notify(NOTIFICATION_ID, runNotificationBuilder.build())
+        }
     }
 }

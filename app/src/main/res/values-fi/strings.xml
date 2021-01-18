@@ -16,6 +16,11 @@
     <string name="welcome_nplease_enter_your_name_and_weight">Tervetulo!\nSyötä ikäsi ja painosi</string>
     <string name="notification_pause">Tauko</string>
     <string name="notification_resume">Jatka</string>
+    <string name="toolbar_menu_cancel">Keskeytä</string>
+    <string name="confirm_dialog_title_cancel">Keskeytä?</string>
+    <string name="confirm_dialog_message">Haluatko todellakin keskeyttää ja menettää tiedot?</string>
+    <string name="confirm_dialog_yes">Jovain</string>
+    <string name="confirm_dialog_no">En</string>
     <string-array name="filter_options">
         <item>Päivä</item>
         <item>Aika</item>

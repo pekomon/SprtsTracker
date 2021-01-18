@@ -24,6 +24,11 @@
     <string name="allow_location_permissions">Allow location permission in order to use SpörtsTracker</string>
     <string name="notification_pause">Pause</string>
     <string name="notification_resume">Resume</string>
+    <string name="toolbar_menu_cancel">Cancel</string>
+    <string name="confirm_dialog_title_cancel">Cancel?</string>
+    <string name="confirm_dialog_message">Do you really want to cancel and lose all data?</string>
+    <string name="confirm_dialog_yes">Yes</string>
+    <string name="confirm_dialog_no">No</string>
     <string-array name="filter_options">
         <item>Date</item>
         <item>Time</item>
