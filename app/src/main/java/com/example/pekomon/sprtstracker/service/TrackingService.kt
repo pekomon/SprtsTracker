@@ -35,20 +35,27 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.maps.model.LatLng
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.concurrent.atomic.AtomicBoolean
+import javax.inject.Inject
 
 typealias Polyline = MutableList<LatLng>
 typealias Polylines = MutableList<Polyline>
 
+@AndroidEntryPoint
 class TrackingService : LifecycleService() {
 
+    @Inject
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
-    val isStarted = AtomicBoolean(false)
+    private val isStarted = AtomicBoolean(false)
+
+    @Inject
+    lateinit var notificationBuilder: NotificationCompat.Builder
 
     private var isTimerEnabled = false
     private var lapTime = 0L
@@ -183,13 +190,6 @@ class TrackingService : LifecycleService() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             createNoticationChannel(notificationManager)
         }
-        val notificationBuilder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
-            .setAutoCancel(false)
-            .setOngoing(true)
-            .setSmallIcon(R.drawable.ic_running)
-            .setContentTitle(resources.getString(R.string.app_name))
-            .setContentText("00:00:00")
-            .setContentIntent(getMainActivityPendingIntent())
 
         startForeground(NOTIFICATION_ID, notificationBuilder.build())
     }
@@ -203,15 +203,6 @@ class TrackingService : LifecycleService() {
         )
         notificationManager.createNotificationChannel(channel)
     }
-
-    private fun getMainActivityPendingIntent() = PendingIntent.getActivity(
-        this,
-        0,
-        Intent(this, MainActivity::class.java).also {
-            it.action = ACTION_FROM_NOTIFICATION
-        },
-        FLAG_UPDATE_CURRENT
-    )
 
     private fun addEmptyPolyline() = _pathPoints.value?.apply {
         add(mutableListOf())
