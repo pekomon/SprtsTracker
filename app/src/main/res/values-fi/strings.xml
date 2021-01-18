@@ -13,7 +13,9 @@
     <string name="start">Aloita</string>
     <string name="stop">Lopeta</string>
     <string name="setup_continue">Jatka</string>
-    <string name="welcome_nplease_enter_your_name_and_weight">Welcome!\nPlease enter your name and weight.</string>
+    <string name="welcome_nplease_enter_your_name_and_weight">Tervetulo!\nSyötä ikäsi ja painosi</string>
+    <string name="notification_pause">Tauko</string>
+    <string name="notification_resume">Jatka</string>
     <string-array name="filter_options">
         <item>Päivä</item>
         <item>Aika</item>

@@ -17,7 +17,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.example.pekomon.sprtstracker.R
-import com.example.pekomon.sprtstracker.internal.Constants.ACTION_FROM_NOTIFICATION
 import com.example.pekomon.sprtstracker.internal.Constants.ACTION_PAUSE_SERVICE
 import com.example.pekomon.sprtstracker.internal.Constants.ACTION_START_RESUME_SERVICE
 import com.example.pekomon.sprtstracker.internal.Constants.ACTION_STOP_SERVICE
@@ -27,8 +26,8 @@ import com.example.pekomon.sprtstracker.internal.Constants.NOTIFICATION_CHANNEL_
 import com.example.pekomon.sprtstracker.internal.Constants.NOTIFICATION_CHANNEL_NAME
 import com.example.pekomon.sprtstracker.internal.Constants.NOTIFICATION_ID
 import com.example.pekomon.sprtstracker.internal.Constants.TIMER_UPDATE_INTERVAL_MILLIS
-import com.example.pekomon.sprtstracker.ui.MainActivity
 import com.example.pekomon.sprtstracker.utils.LocationPermissionHelper
+import com.example.pekomon.sprtstracker.utils.TimeUtils
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -55,7 +54,10 @@ class TrackingService : LifecycleService() {
     private val isStarted = AtomicBoolean(false)
 
     @Inject
-    lateinit var notificationBuilder: NotificationCompat.Builder
+    lateinit var baseNotificationBuilder: NotificationCompat.Builder
+
+    private lateinit var runNotificationBuilder: NotificationCompat.Builder
+
 
     private var isTimerEnabled = false
     private var lapTime = 0L
@@ -124,10 +126,12 @@ class TrackingService : LifecycleService() {
 
     override fun onCreate() {
         super.onCreate()
+        runNotificationBuilder = baseNotificationBuilder
         fusedLocationProviderClient = FusedLocationProviderClient(this)
 
         isTrackingOn.observe(this, Observer {
             updateTracking(it)
+            updateRunNotification(it)
         })
     }
 
@@ -191,7 +195,12 @@ class TrackingService : LifecycleService() {
             createNoticationChannel(notificationManager)
         }
 
-        startForeground(NOTIFICATION_ID, notificationBuilder.build())
+        startForeground(NOTIFICATION_ID, baseNotificationBuilder.build())
+
+        timeRunSeconds.observe(this, Observer {
+            val notification = runNotificationBuilder.setContentText(TimeUtils.getFormattedTime(it*1000L, false))
+            notificationManager.notify(NOTIFICATION_ID, notification.build())
+        })
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -222,5 +231,32 @@ class TrackingService : LifecycleService() {
     private fun postInitialValues() {
         _isTrackingOn.postValue(false)
         _pathPoints.postValue(mutableListOf())
+    }
+
+    private fun updateRunNotification(isTracking: Boolean) {
+        val actionText = resources.getString(if (isTracking) R.string.notification_pause else R.string.notification_resume)
+        val pendingIntent = if (isTracking) {
+            val pauseIntent = Intent(this, TrackingService::class.java).apply {
+                action = ACTION_PAUSE_SERVICE
+            }
+            PendingIntent.getService(this, 1, pauseIntent, FLAG_UPDATE_CURRENT)
+
+        } else {
+            val pauseIntent = Intent(this, TrackingService::class.java).apply {
+                action = ACTION_START_RESUME_SERVICE
+            }
+            PendingIntent.getService(this, 2, pauseIntent, FLAG_UPDATE_CURRENT)
+        }
+
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        // Get rid of previous actions in notification
+        runNotificationBuilder.javaClass.getDeclaredField("mActions").apply {
+            isAccessible = true
+            set(runNotificationBuilder, ArrayList<NotificationCompat.Action>())
+        }
+        runNotificationBuilder = baseNotificationBuilder.addAction(R.drawable.ic_pause_circle, actionText, pendingIntent)
+        notificationManager.notify(NOTIFICATION_ID, runNotificationBuilder.build())
+
     }
 }
