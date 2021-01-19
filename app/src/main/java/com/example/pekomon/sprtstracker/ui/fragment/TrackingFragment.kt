@@ -9,7 +9,9 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.example.pekomon.sprtstracker.R
+import com.example.pekomon.sprtstracker.data.entity.Run
 import com.example.pekomon.sprtstracker.databinding.FragmentTrackingBinding
+import com.example.pekomon.sprtstracker.extensions.length
 import com.example.pekomon.sprtstracker.internal.Constants.ACTION_PAUSE_SERVICE
 import com.example.pekomon.sprtstracker.internal.Constants.ACTION_START_RESUME_SERVICE
 import com.example.pekomon.sprtstracker.internal.Constants.ACTION_STOP_SERVICE
@@ -22,9 +24,13 @@ import com.example.pekomon.sprtstracker.ui.viewmodel.MainViewModel
 import com.example.pekomon.sprtstracker.utils.TimeUtils
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import java.lang.Math.round
+import java.util.*
 
 @AndroidEntryPoint
 class TrackingFragment : Fragment(R.layout.fragment_tracking) {
@@ -41,6 +47,8 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking) {
     private var currentRunTimeMillis = 0L
 
     private var menu: Menu? = null
+
+    private var weight = 77.2f
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -113,6 +121,11 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking) {
     private fun setupClicklistener() {
         binding.btnToggleRun.setOnClickListener {
             toggleRun()
+        }
+
+        binding.btnFinishRun.setOnClickListener {
+            zoomWholeTrackOnMap()
+            endRun()
         }
     }
 
@@ -196,6 +209,44 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking) {
         return PolylineOptions()
             .color(POLYLINE_COLOR)
             .width(POLYLINE_WIDTH)
+    }
+
+    private fun zoomWholeTrackOnMap() {
+        val bounds = LatLngBounds.builder()
+        for (polyline in points) {
+            for (position in polyline) {
+                bounds.include(position)
+            }
+        }
+        map?.moveCamera(
+            CameraUpdateFactory.newLatLngBounds(
+                bounds.build(),
+                binding.mapView.width,
+                binding.mapView.height,
+                (binding.mapView.height * 0.05f).toInt()
+            )
+        )
+    }
+
+    private fun endRun() {
+        map?.snapshot { bmp ->
+            var totalDistance = 0
+            for (polyline in points) {
+                totalDistance += polyline.length().toInt()
+            }
+            // get km/h  rounded
+            val averageSpeed = round ((totalDistance / 1000f) / (currentRunTimeMillis / 1000 / 60 / 60) * 10 ) / 10f
+            val dateTimeStamp = Calendar.getInstance().timeInMillis
+            val caloriesBurned = ((totalDistance/1000) * weight).toInt()
+            val run = Run(bmp, dateTimeStamp, averageSpeed, totalDistance, currentRunTimeMillis, caloriesBurned)
+            viewModel.addRun(run)
+            Snackbar.make(
+                requireActivity().findViewById(R.id.rootView),
+                resources.getString(R.string.snackbar_saved_successfully),
+                Snackbar.LENGTH_LONG
+            ).show()
+            stop()
+        }
     }
 
     override fun onResume() {

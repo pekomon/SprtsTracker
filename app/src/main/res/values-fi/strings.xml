@@ -21,6 +21,7 @@
     <string name="confirm_dialog_message">Haluatko todellakin keskeyttää ja menettää tiedot?</string>
     <string name="confirm_dialog_yes">Jovain</string>
     <string name="confirm_dialog_no">En</string>
+    <string name="snackbar_saved_successfully">Tallennus onnistui</string>
     <string-array name="filter_options">
         <item>Päivä</item>
         <item>Aika</item>
