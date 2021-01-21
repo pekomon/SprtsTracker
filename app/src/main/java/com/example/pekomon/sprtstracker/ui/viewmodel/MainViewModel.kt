@@ -11,6 +11,8 @@ class MainViewModel @ViewModelInject constructor(
     val repository: MainRepository
 ) : ViewModel() {
 
+    val runs = repository.getAllRunsByDate()
+
     fun addRun(run: Run) = viewModelScope.launch {
         repository.insertRun(run)
     }

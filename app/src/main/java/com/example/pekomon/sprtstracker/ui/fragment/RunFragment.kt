@@ -4,12 +4,16 @@ import android.Manifest
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pekomon.sprtstracker.R
 import com.example.pekomon.sprtstracker.databinding.FragmentRunBinding
 import com.example.pekomon.sprtstracker.internal.Constants.REQUEST_CODE_LOCATION_PERMISSION
+import com.example.pekomon.sprtstracker.ui.adapters.RunAdapter
 import com.example.pekomon.sprtstracker.ui.viewmodel.MainViewModel
 import com.example.pekomon.sprtstracker.utils.LocationPermissionHelper
 import com.example.pekomon.sprtstracker.utils.PermissionHelperImpl
@@ -23,17 +27,37 @@ class RunFragment : Fragment(R.layout.fragment_run), EasyPermissions.PermissionC
     private val viewModel: MainViewModel by viewModels()
     private lateinit var binding: FragmentRunBinding
 
+    private lateinit var runAdapter: RunAdapter
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentRunBinding.bind(view)
         checkAndRequestPermissions()
+        setupRecyclerView()
         setupClickListeners()
+        setupObservers()
     }
 
     private fun setupClickListeners() {
         binding.fab.setOnClickListener {
             findNavController().navigate(R.id.action_runFragment_to_trackingFragment)
         }
+    }
+
+    private fun setupRecyclerView() {
+        binding.rvRuns.apply {
+            runAdapter = RunAdapter().also {
+                adapter = it
+            }
+            layoutManager = LinearLayoutManager(requireContext())
+
+        }
+    }
+
+    private fun setupObservers() {
+        viewModel.runs.observe(viewLifecycleOwner, Observer {
+            runAdapter.submitlist(it)
+        })
     }
 
     private fun checkAndRequestPermissions() {

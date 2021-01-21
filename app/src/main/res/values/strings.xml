@@ -30,6 +30,14 @@
     <string name="confirm_dialog_yes">Yes</string>
     <string name="confirm_dialog_no">No</string>
     <string name="snackbar_saved_successfully">Saved successfully</string>
+    <string name="run_list_date">DATE</string>
+    <string name="run_list_time">TIME</string>
+    <string name="run_list_distance">DISTANCE</string>
+    <string name="run_list_avgspeed">AVGSPEED</string>
+    <string name="run_list_calories">CALORIES</string>
+    <string name="run_list_avg_speed_template" translatable="false">%1$.2fkm/h</string>
+    <string name="run_list_distance_in_km_template" translatable="false">%1$1dkm</string>
+    <string name="run_list_calories_burned_template" translatable="false">%1$dkcal</string>
     <string-array name="filter_options">
         <item>Date</item>
         <item>Time</item>
