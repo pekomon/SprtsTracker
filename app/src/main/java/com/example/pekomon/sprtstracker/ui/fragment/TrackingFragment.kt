@@ -1,6 +1,5 @@
 package com.example.pekomon.sprtstracker.ui.fragment
 
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
@@ -235,7 +234,7 @@ class TrackingFragment : Fragment(R.layout.fragment_tracking) {
                 totalDistance += polyline.length().toInt()
             }
             // get km/h  rounded
-            val averageSpeed = round((totalDistance / (currentRunTimeMillis/1000)) * 3.6f)
+            val averageSpeed = round(totalDistance / (currentRunTimeMillis/1000f))* 3.6f
             val dateTimeStamp = Calendar.getInstance().timeInMillis
             val caloriesBurned = ((totalDistance/1000) * weight).toInt()
             val run = Run(bmp, dateTimeStamp,
