@@ -75,7 +75,6 @@ class RunFragment : Fragment(R.layout.fragment_run), EasyPermissions.PermissionC
                 adapter = it
             }
             layoutManager = LinearLayoutManager(requireContext())
-
         }
     }
 
@@ -84,7 +83,7 @@ class RunFragment : Fragment(R.layout.fragment_run), EasyPermissions.PermissionC
             it.forEach{
                 Timber.d("${it.id} $it")
             }
-            runAdapter.submitlist(it)
+            runAdapter.submitList(it)
         })
     }
 

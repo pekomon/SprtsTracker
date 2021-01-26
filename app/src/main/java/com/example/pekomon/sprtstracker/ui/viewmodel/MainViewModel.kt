@@ -21,7 +21,7 @@ class MainViewModel @ViewModelInject constructor(
 
     val runs = MediatorLiveData<List<Run>>()
 
-    var sorting = SortingType.CALORIES
+    var sorting = SortingType.DATE
 
     init {
         runs.addSource(runsByDate) { result ->
