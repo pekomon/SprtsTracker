@@ -1,6 +1,5 @@
 package com.example.pekomon.sprtstracker.ui.adapters
 
-import android.util.TimeUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +10,7 @@ import com.bumptech.glide.Glide
 import com.example.pekomon.sprtstracker.R
 import com.example.pekomon.sprtstracker.data.entity.Run
 import com.example.pekomon.sprtstracker.databinding.ListitemRunBinding
+import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -41,29 +41,19 @@ class RunAdapter : RecyclerView.Adapter<RunAdapter.RunViewHolder>() {
             false
         )
         return RunViewHolder(binding.root)
-        /*
-        val binding = HoursListItemsBinding
-            .inflate(LayoutInflater.from(parent.context), parent, false)
-        return HoursViewHolder(binding)
-         */
-
-        return RunViewHolder(
-            LayoutInflater.from(parent.context).inflate(
-                R.layout.listitem_run,
-                parent,
-                false
-            )
-        )
     }
 
     override fun onBindViewHolder(holder: RunViewHolder, position: Int) {
         val run = differ.currentList[position]
+        Timber.d("Pos: $position id: ${run.id}")
         holder.itemView.apply {
+
             Glide.with(this).load(run.image).into(binding.ivRunImage)
             val calendar = Calendar.getInstance().apply {
                 timeInMillis = run.timestamp
             }
-            val dateFormat = SimpleDateFormat("dd.MM.yy", Locale.getDefault())
+
+            val dateFormat = SimpleDateFormat("hh.mm.ss", Locale.getDefault())
             binding.tvDate.text = dateFormat.format(calendar.time)
             binding.tvAvgSpeed.text = resources.getString(R.string.run_list_avg_speed_template,
             run.averageSpeed)
@@ -76,7 +66,6 @@ class RunAdapter : RecyclerView.Adapter<RunAdapter.RunViewHolder>() {
                 R.string.run_list_calories_burned_template,
                 run.calories
             )
-
         }
     }
 

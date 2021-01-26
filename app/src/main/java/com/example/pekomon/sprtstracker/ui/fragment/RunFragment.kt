@@ -4,7 +4,7 @@ import android.Manifest
 import android.os.Build
 import android.os.Bundle
 import android.view.View
-import android.widget.LinearLayout
+import android.widget.AdapterView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -13,13 +13,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pekomon.sprtstracker.R
 import com.example.pekomon.sprtstracker.databinding.FragmentRunBinding
 import com.example.pekomon.sprtstracker.internal.Constants.REQUEST_CODE_LOCATION_PERMISSION
+import com.example.pekomon.sprtstracker.internal.enum.SortingType
 import com.example.pekomon.sprtstracker.ui.adapters.RunAdapter
 import com.example.pekomon.sprtstracker.ui.viewmodel.MainViewModel
 import com.example.pekomon.sprtstracker.utils.LocationPermissionHelper
-import com.example.pekomon.sprtstracker.utils.PermissionHelperImpl
 import dagger.hilt.android.AndroidEntryPoint
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
+import timber.log.Timber
 
 @AndroidEntryPoint
 class RunFragment : Fragment(R.layout.fragment_run), EasyPermissions.PermissionCallbacks {
@@ -35,6 +36,30 @@ class RunFragment : Fragment(R.layout.fragment_run), EasyPermissions.PermissionC
         checkAndRequestPermissions()
         setupRecyclerView()
         setupClickListeners()
+
+        when (viewModel.sorting) {
+            SortingType.DATE -> binding.spFilter.setSelection(0)
+            SortingType.DURATION -> binding.spFilter.setSelection(1)
+            SortingType.DISTANCE -> binding.spFilter.setSelection(2)
+            SortingType.AVERAGE_SPEED -> binding.spFilter.setSelection(3)
+            SortingType.CALORIES -> binding.spFilter.setSelection(4)
+        }
+        binding.spFilter.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(adapterView: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                when (position) {
+                    0 -> viewModel.sortRuns(SortingType.DATE)
+                    1 -> viewModel.sortRuns(SortingType.DURATION)
+                    2 -> viewModel.sortRuns(SortingType.DISTANCE)
+                    3 -> viewModel.sortRuns(SortingType.AVERAGE_SPEED)
+                    4 -> viewModel.sortRuns(SortingType.CALORIES)
+                }
+            }
+
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+                // doNothing()
+            }
+        }
+
         setupObservers()
     }
 
@@ -56,6 +81,9 @@ class RunFragment : Fragment(R.layout.fragment_run), EasyPermissions.PermissionC
 
     private fun setupObservers() {
         viewModel.runs.observe(viewLifecycleOwner, Observer {
+            it.forEach{
+                Timber.d("${it.id} $it")
+            }
             runAdapter.submitlist(it)
         })
     }
