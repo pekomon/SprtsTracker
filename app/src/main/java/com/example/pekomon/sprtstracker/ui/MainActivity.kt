@@ -50,4 +50,8 @@ class MainActivity : AppCompatActivity() {
             findNavController(R.id.navHostFragment).navigate(R.id.action_global_to_trackingFragment)
         }
     }
+
+    fun setToolbarTitle(title: String) {
+        binding.tvToolbarTitle.text = title
+    }
 }

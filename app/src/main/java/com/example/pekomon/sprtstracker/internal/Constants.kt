@@ -27,4 +27,10 @@ object Constants {
 
     const val TIMER_UPDATE_INTERVAL_MILLIS = 50L
 
+    // Shared Prefs
+    const val SHARED_PREFS_FILE = "sprts_prefs"
+    const val SETTING_VALUE_IS_FIRST_LAUNCH = "SPRTS_01"
+    const val SETTING_VALUE_NAME = "SPRTS_02"
+    const val SETTING_VALUE_WEIGHT = "SPRTS_03"
+
 }
