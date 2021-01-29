@@ -31,6 +31,13 @@ class SetupFragment : Fragment(R.layout.fragment_setup) {
         super.onViewCreated(view, savedInstanceState)
 
         if (!isFirstLaunch) {
+
+            val name = sharedPrefs.getString(SETTING_VALUE_NAME, "")
+            (activity as MainActivity).setToolbarTitle(resources.getString(
+                R.string.let_s_go_username,
+                name
+            ))
+
             val navOptions = NavOptions.Builder()
                 .setPopUpTo(R.id.setupFragment, true)
                 .build()

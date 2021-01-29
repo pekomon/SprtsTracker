@@ -23,7 +23,7 @@
     <string name="confirm_dialog_no">En</string>
     <string name="snackbar_saved_successfully">Tallennus onnistui</string>
     <string name="snackbar_nag_fill_fields">Täytä molemmat kentät</string>
-
+    <string name="snackbar_changes_saved">Muutokset tallennettu</string>
     <string-array name="filter_options">
         <item>Päivä</item>
         <item>Aika</item>
