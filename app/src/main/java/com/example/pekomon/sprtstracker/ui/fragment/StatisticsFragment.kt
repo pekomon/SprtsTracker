@@ -1,15 +1,22 @@
 package com.example.pekomon.sprtstracker.ui.fragment
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.example.pekomon.sprtstracker.R
 import com.example.pekomon.sprtstracker.databinding.FragmentStatisticsBinding
+import com.example.pekomon.sprtstracker.ui.markerview.CustomMarkerView
 import com.example.pekomon.sprtstracker.ui.viewmodel.MainViewModel
 import com.example.pekomon.sprtstracker.ui.viewmodel.StatisticsViewModel
 import com.example.pekomon.sprtstracker.utils.TimeUtils
+import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.data.BarData
+import com.github.mikephil.charting.data.BarDataSet
+import com.github.mikephil.charting.data.BarEntry
 import dagger.hilt.android.AndroidEntryPoint
 import kotlin.math.round
 
@@ -25,6 +32,7 @@ class StatisticsFragment : Fragment(R.layout.fragment_statistics) {
         binding = FragmentStatisticsBinding.bind(view)
 
         setupObservers()
+        setupBarChart()
     }
 
     private fun setupObservers() {
@@ -58,5 +66,44 @@ class StatisticsFragment : Fragment(R.layout.fragment_statistics) {
             }
         })
 
+        viewModel.runsByDate.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                val allAverages = it.indices.map { i -> BarEntry(i.toFloat(), it[i].averageSpeed) }
+                val barDataSet = BarDataSet(allAverages, resources.getString(R.string.barchart_average_speed)).apply {
+                    valueTextColor = Color.WHITE
+                    color = ContextCompat.getColor(requireContext(), R.color.colorAccent)
+                }
+                binding.barChart.data = BarData(barDataSet)
+                binding.barChart.marker = CustomMarkerView(it, requireContext(), R.layout.barchart_marker_view)
+                binding.barChart.invalidate()
+
+            }
+        })
+    }
+
+    private fun setupBarChart() {
+        binding.barChart.xAxis.apply {
+            position = XAxis.XAxisPosition.BOTTOM
+            setDrawLabels(false)
+            axisLineColor = Color.WHITE
+            textColor = Color.WHITE
+            setDrawGridLines(false)
+        }
+        binding.barChart.axisLeft.apply {
+            axisLineColor = Color.WHITE
+            textColor = Color.WHITE
+            setDrawGridLines(false)
+        }
+        binding.barChart.axisRight.apply {
+            axisLineColor = Color.WHITE
+            textColor = Color.WHITE
+            setDrawGridLines(false)
+        }
+
+        binding.barChart.apply {
+            description.text = resources.getString(R.string.barchart_average_speed)
+            legend.isEnabled = false
+
+        }
     }
 }

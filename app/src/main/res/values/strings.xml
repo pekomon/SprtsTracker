@@ -40,6 +40,7 @@
     <string name="run_list_calories_burned_template" translatable="false">%1$dkcal</string>
     <string name="snackbar_nag_fill_fields">Please fill both fields</string>
     <string name="snackbar_changes_saved">Changes saved</string>
+    <string name="barchart_average_speed">Average speed</string>
     <string-array name="filter_options">
         <item>Date</item>
         <item>Time</item>
