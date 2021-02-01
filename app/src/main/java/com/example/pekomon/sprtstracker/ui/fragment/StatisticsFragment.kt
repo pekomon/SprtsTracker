@@ -44,25 +44,28 @@ class StatisticsFragment : Fragment(R.layout.fragment_statistics) {
 
         viewModel.totalDistance.observe(viewLifecycleOwner, Observer {
             it?.let {
-                binding.tvTotalDistance.text = (round((it/1000) * 10f) / 10f).toString()
-            }
-        })
-
-        viewModel.totalDistance.observe(viewLifecycleOwner, Observer {
-            it?.let {
-                binding.tvTotalDistance.text = (round((it/1000) * 10f) / 10f).toString()
+                binding.tvTotalDistance.text = resources.getString(
+                    R.string.x_km_template,
+                    (round((it/1000) * 10f) / 10f).toString()
+                )
             }
         })
 
         viewModel.averageSpeed.observe(viewLifecycleOwner, Observer {
             it?.let {
-                binding.tvAverageSpeed.text = (round(it * 10f) / 10f).toString()
+                binding.tvAverageSpeed.text = resources.getString(
+                    R.string.x_km_h_template,
+                    (round(it * 10f) / 10f).toString()
+                )
             }
         })
 
         viewModel.totalCalories.observe(viewLifecycleOwner, Observer {
             it?.let {
-                binding.tvTotalCalories.text = it.toString()
+                binding.tvTotalCalories.text =  resources.getString(
+                    R.string.x_kcal_template,
+                    it.toString()
+                )
             }
         })
 

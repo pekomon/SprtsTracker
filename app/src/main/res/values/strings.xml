@@ -2,10 +2,8 @@
     <string name="app_name">SpörtsTracker</string>
     <string name="sort_by">Sort by:</string>
     <string name="total_distance">Total Distance</string>
-    <string name="_0km" translatable="false">0km</string>
     <string name="total_time">Total Time</string>
     <string name="total_calories_burned">Total Calories Burned</string>
-    <string name="_0kcal">0kcal</string>
     <string name="average_speed">Average Speed</string>
     <string name="your_name">Your Name</string>
     <string name="your_weight">Your Weight</string>
@@ -14,9 +12,7 @@
     <string name="finish_run">Finish Run</string>
     <string name="start">Start</string>
     <string name="stop">Stop</string>
-    <string name="_00_00_00_00" translatable="false">00:00:00:00</string>
     <string name="setup_continue">Continue</string>
-    <string name="kg" translatable="false">kg</string>
     <string name="welcome_nplease_enter_your_name_and_weight">Welcome!\nPlease enter your name and weight.</string>
     <string name="bottom_nav_menu_item_your_runs">Your Runs</string>
     <string name="bottom_nav_menu_item_statistics">Statistics</string>
@@ -30,14 +26,7 @@
     <string name="confirm_dialog_yes">Yes</string>
     <string name="confirm_dialog_no">No</string>
     <string name="snackbar_saved_successfully">Saved successfully</string>
-    <string name="run_list_date">DATE</string>
-    <string name="run_list_time">TIME</string>
-    <string name="run_list_distance">DISTANCE</string>
-    <string name="run_list_avgspeed">AVGSPEED</string>
-    <string name="run_list_calories">CALORIES</string>
-    <string name="run_list_avg_speed_template" translatable="false">%1$.2fkm/h</string>
-    <string name="run_list_distance_in_km_template" translatable="false">%1$1dkm</string>
-    <string name="run_list_calories_burned_template" translatable="false">%1$dkcal</string>
+
     <string name="snackbar_nag_fill_fields">Please fill both fields</string>
     <string name="snackbar_changes_saved">Changes saved</string>
     <string name="barchart_average_speed">Average speed</string>
